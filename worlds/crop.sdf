@@ -1,0 +1,172 @@
+<?xml version='1.0'?>
+<sdf version='1.9'>
+  <world name='crop'>
+  
+    <!-- CONFIGURACIÓN DE VELOCIDAD DE SIMULACIÓN FÍSICA -->
+    <physics name="1ms" type="ignore">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <!-- PLUGINS NECESARIOS PARA LA SIMULACIÓN -->
+    <plugin filename="gz-sim-physics-system"
+      name="gz::sim::systems::Physics">
+    </plugin>
+    <plugin filename="gz-sim-sensors-system"
+      name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-imu-system"
+      name="gz::sim::systems::Imu">
+    </plugin>
+    <plugin filename="gz-sim-navsat-system"
+      name="gz::sim::systems::NavSat">
+    </plugin>
+    <plugin filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands">
+    </plugin>
+    <plugin filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+
+    <!-- VIENTO x(r) y(g) z(b) - 11kmp/h - 3.06m/s -->
+    <wind>
+      <linear_velocity>3.06 3.06 0</linear_velocity>    
+    </wind>
+
+    <!-- HABILITACIÓN DE CIELO -->
+    <scene>
+      <ambient>1 1 1 1</ambient>
+      <background>1 1 1 1</background>
+      <shadows>1</shadows>
+      <sky></sky>
+    </scene>
+
+    <!-- COORDENADAS GEOGRÁFICAS DEL LUGAR DE SIMULACIÓN -->
+    <spherical_coordinates>
+      <latitude_deg>-7.762234523256719</latitude_deg>
+      <longitude_deg>-79.318536462156</longitude_deg>
+      <elevation>97</elevation>
+      <heading_deg>0</heading_deg>
+      <surface_model>EARTH_WGS84</surface_model>
+    </spherical_coordinates>
+
+    <!-- GRAVEDAD, CAMPO MAGNÉTICO Y ATMÓSFERA -->
+    <gravity>0 0 -9.81</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field> <!-- unidad: Tesla -->
+    <atmosphere type='adiabatic'/>
+
+    <!-- LUZ SOLAR -->
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.8 0.8 0.8 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <!-- AUDIO -->
+    <audio>
+      <device>default</device>
+    </audio>
+
+    <!-- EJES DE REFERENCIA -->
+    <model name="axes">
+      <static>1</static>
+      <link name="link">
+        <visual name="r">     <!-- Eje X en rojo -->
+          <cast_shadows>0</cast_shadows>
+          <pose>5 0 0 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>10 0.01 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 0 0 0.8</ambient>
+            <diffuse>1 0 0 0.8</diffuse>
+            <emissive>1 0 0 0.8</emissive>
+            <specular>0.5 0.5 0.5 0.8</specular>
+          </material>
+        </visual>
+        <visual name="g">   <!-- Eje Y en verde -->
+          <cast_shadows>0</cast_shadows>
+          <pose>0 5 0.1 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 10 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0 1 0 0.8</ambient>
+            <diffuse>0 1 0 0.8</diffuse>
+            <emissive>0 1 0 0.8</emissive>
+            <specular>0.5 0.5 0.5 0.8</specular>
+          </material>
+        </visual>
+        <visual name="b">   <!-- Eje Z en azul -->
+          <cast_shadows>0</cast_shadows>
+          <pose>0 0 5.1 0 0 0</pose>
+          <geometry>
+            <box>
+              <size>0.01 0.01 10</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0 0 1 0.8</ambient>
+            <diffuse>0 0 1 0.8</diffuse>
+            <emissive>0 0 1 0.8</emissive>
+            <specular>0.5 0.5 0.5 0.8</specular>
+          </material>
+        </visual>
+        <sensor name="navsat_sensor" type="navsat"> <!-- Sensor de navegación satelital para referencia geográfica -->
+          <always_on>1</always_on>
+          <update_rate>1</update_rate>
+        </sensor>
+      </link>
+    </model>
+
+    <!-- ESTADO INICIAL -->
+    <state world_name='crop'>
+      <sim_time>150 490000000</sim_time>
+      <real_time>118 470627290</real_time>
+      <wall_time>159649048 155571625</wall_time>
+      <iterations>16797</iterations>
+    </state>
+
+    <!-- CONFIGURACIÓN DE CÁMARA -->
+    <gui fullscreen='true'>
+      <camera name='user_camera'>
+        <pose>0 -12 6 0 0.35 1.57</pose> 
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+        <follow>uav_with_gimbal</follow>
+      </camera>
+    </gui>
+
+    <!-- Terreno -->
+    <include>
+      <uri>model://grass</uri>
+      <pose degrees="true">150 0 0 0 0 360</pose>
+    </include>
+
+    <!-- Cultivo -->
+    <include>
+      <uri>model://sugarcane_field</uri>
+      <pose degrees="true">55 0 0 90 0 90</pose>
+    </include>
+
+    <!-- Modelo del dron -->
+    <include>
+      <uri>model://uav_with_gimbal</uri>
+      <pose degrees="true">0 0 0.06 0 0 0</pose>
+    </include>
+
+  </world>
+</sdf>
