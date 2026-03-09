@@ -130,7 +130,7 @@ def main():
             results = model.predict(
                 source=frame_to_process,
                 imgsz=640,
-                conf=0.25,
+                conf=0.4,
                 verbose=False
             )
 
