@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<sdf version="1.9">
+  <model name="camera">
+    <pose>0 0 0 0 0 0</pose>
+
+    <link name="camera_link">
+      <inertial>
+        <mass>0.01</mass>
+        <inertia>
+          <ixx>0.000001</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000001</iyy>
+          <iyz>0</iyz>
+          <izz>0.000001</izz>
+        </inertia>
+      </inertial>
+
+      <visual name="camera_body_visual">
+        <geometry>
+          <box>
+            <size>0.025 0.025 0.004</size>  <!-- tamaño de cámara raspberry -->
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.1 0.1 0.1 1</ambient>
+          <diffuse>0.1 0.1 0.1 1</diffuse>
+          <specular>0.01 0.01 0.01 1</specular>
+        </material>
+      </visual>
+
+      <collision name="camera_body_collision">
+        <geometry>
+          <box>
+            <size>0.025 0.025 0.004</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <sensor name="camera" type="camera">
+        <gz_frame_id>camera_link</gz_frame_id>    <!-- ID del marco de referencia para la cámara -->
+        <pose degrees="true">0 0 0 90 90 0</pose>
+        <camera>
+          <horizontal_fov>1.19</horizontal_fov>   <!-- Campo de visión horizontal de la cámara (en radianes) -->
+          <image>
+            <width>960</width>
+            <height>960</height>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>100</far>
+          </clip>
+        </camera>
+        <always_on>1</always_on>
+        <update_rate>60</update_rate>
+        <visualize>1</visualize>
+        <enable_streaming>true</enable_streaming>
+
+        <plugin filename="CameraZoomPlugin"
+                name="CameraZoomPlugin">
+          <max_zoom>10.0</max_zoom>
+          <slew_rate>0.42514285714</slew_rate>
+        </plugin>
+
+        <plugin name="GstCameraPlugin"
+                filename="GstCameraPlugin">
+          <udp_host>127.0.0.1</udp_host>
+          <udp_port>5600</udp_port>
+          <use_basic_pipeline>true</use_basic_pipeline>
+          <use_cuda>true</use_cuda>
+        </plugin>
+      </sensor>
+    </link>
+  </model>
+</sdf>
